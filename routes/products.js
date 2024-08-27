@@ -2,6 +2,20 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');  // Assuming you have a db.js to handle MySQL connection
 
+// Search products by name or description
+router.get('/search', (req, res) => {
+    const query = req.query.query.toLowerCase();
+    const sql = `SELECT * FROM products WHERE LOWER(name) LIKE ? OR LOWER(description) LIKE ?`;
+    const searchTerm = `%${query}%`;
+  
+    db.query(sql, [searchTerm, searchTerm], (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: 'Error searching for products' });
+      }
+      res.json(results);
+    });
+  });  
+
 // Get top 6 products with the highest sales count
 router.get('/top-sales', (req, res) => {
     const sql = 'SELECT * FROM products ORDER BY sales_count DESC LIMIT 6';
