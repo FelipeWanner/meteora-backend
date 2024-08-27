@@ -2,6 +2,19 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');  // Assuming you have a db.js to handle MySQL connection
 
+// Get top 6 products with the highest sales count
+router.get('/top-sales', (req, res) => {
+    const sql = 'SELECT * FROM products ORDER BY sales_count DESC LIMIT 6';
+    
+    db.query(sql, (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error fetching top-selling products' });
+        }
+        console.log(results);  // This should log the query results
+        res.json(results);     // Return the results as JSON
+    });
+});
+
 // funcao responsavel por passar os produtos para a pagina de categorias, baseado na categoria de cada produto
 router.get('/category/:categoryName', (req, res) => {
     const categoryName = req.params.categoryName.toLowerCase();
